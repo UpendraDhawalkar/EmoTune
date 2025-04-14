@@ -1,0 +1,466 @@
+<!-- result.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TOP {{input}} Videos</title>
+    <link rel="shortcut icon" type="image/png" href="../static/fev1M1.png">
+    <link rel="stylesheet" href="../static/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .controls-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: #f5f5f5;
+            margin: 1rem;
+            border-radius: 8px;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .search-box {
+            position: relative;
+            flex-grow: 1;
+            max-width: 400px;
+        }
+        
+        #videoSearch {
+            padding: 10px 15px;
+            width: 100%;
+            border-radius: 20px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+        }
+        
+        .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #777;
+        }
+        
+        .sort-options {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .sort-btn {
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: none;
+            background: #FF0000;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .sort-btn:hover {
+            background: #CC0000;
+        }
+        
+        #videoContainer {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            padding: 1rem;
+        }
+        
+        .video-card {
+            transition: transform 0.3s;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .video-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .video-info {
+            padding: 10px;
+            background: #f9f9f9;
+        }
+        
+        .video-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        @media (max-width: 768px) {
+            .controls-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .search-box {
+                max-width: 100%;
+            }
+            
+            #videoContainer {
+                grid-template-columns: 1fr;
+            }
+        }
+        .video-card {
+    transition: transform 0.3s;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    cursor: pointer;
+}
+
+.video-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+.video-info {
+    padding: 10px;
+    background: #f9f9f9;
+    pointer-events: none; /* Prevent clicks on info from triggering video play */
+}
+.video-player {
+    width: 100%;
+    height: 200px;
+    position: relative;
+    background: #000;
+}
+
+.video-player iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+.sub-options {
+    display: flex;
+    gap: 10px;
+    padding: 0.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.option-btn {
+    padding: 8px 15px;
+    border-radius: 20px;
+    border: 2px solid #FF0000;
+    background: white;
+    color: #FF0000;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 14px;
+}
+
+.option-btn:hover {
+    background: #FF0000;
+    color: white;
+}
+
+.option-btn.active {
+    background: #FF0000;
+    color: white;
+}
+    </style>
+</head>
+<body class="index resultpage">
+    <nav><br>
+        <h1 style='text-align:center'>TOP {{input}} Videos</h1>
+        <button class="btn"><a href="/">Home</a></button>
+        <button class="btn"><a href="/index">Back to detect emotion</a></button>
+    </nav>
+    <form id="subOptionForm" method="post" action="/result">
+        <input type="hidden" name="btnradio" value="video"> <!-- or "video" -->
+        <input type="hidden" name="sub_option" id="subOptionInput" value="">
+        <input type="hidden" name="mood" value="{{ input }}"> <!-- Add this line -->
+    </form>
+    <div class="controls-container">
+        <div class="search-box">
+            <input type="text" id="videoSearch" placeholder="Search videos..." oninput="filterVideos()">
+            <i class="fas fa-search search-icon"></i>
+        </div>
+        
+        <!-- Add sub-options section -->
+        <div class="sub-options">
+            {% if input == 'Happy' %}
+                <button class="option-btn {% if current_sub_option == 'love' %}active{% endif %}" 
+                        onclick="selectOption('love')">Love Songs</button>
+                <button class="option-btn {% if current_sub_option == 'vibes' %}active{% endif %}" 
+                        onclick="selectOption('vibes')">Good Vibes</button>
+            {% endif %}
+            {% if input == 'Sad' %}
+                <button class="option-btn {% if current_sub_option == 'melancholic' %}active{% endif %}" 
+                        onclick="selectOption('melancholic')">Melancholic</button>
+                <button class="option-btn {% if current_sub_option == 'comfort' %}active{% endif %}" 
+                        onclick="selectOption('comfort')">Comfort Songs</button>
+            {% endif %}
+            {% if input == 'Neutral' %}
+                <button class="option-btn {% if current_sub_option == 'focus' %}active{% endif %}" 
+                        onclick="selectOption('focus')">Focus Songs</button>
+                <button class="option-btn {% if current_sub_option == 'relax' %}active{% endif %}" 
+                        onclick="selectOption('relax')">Relax Songs</button>
+            {% endif %}
+            {% if input == 'Angry' %}
+                <button class="option-btn {% if current_sub_option == 'aggressive' %}active{% endif %}" 
+                        onclick="selectOption('aggressive')">Aggressive</button>
+                <button class="option-btn {% if current_sub_option == 'venting' %}active{% endif %}" 
+                        onclick="selectOption('venting')">Venting</button>
+            {% endif %}
+            {% if input == 'Surprise' %}
+                <button class="option-btn {% if current_sub_option == 'upbeat' %}active{% endif %}" 
+                        onclick="selectOption('upbeat')">Upbeat</button>
+                <button class="option-btn {% if current_sub_option == 'chill' %}active{% endif %}" 
+                        onclick="selectOption('chill')">Chill</button>
+            {% endif %}
+            {% if input == 'Fear' %}
+                <button class="option-btn {% if current_sub_option == 'brave' %}active{% endif %}" 
+                        onclick="selectOption('brave')">Brave</button>
+                <button class="option-btn {% if current_sub_option == 'calm' %}active{% endif %}" 
+                        onclick="selectOption('calm')">Calm</button>
+            {% endif %}
+        </div>
+        <div class="sort-options">
+            <button class="sort-btn" onclick="sortVideos('date')"><i class="fas fa-calendar"></i> Newest</button>
+            <button class="sort-btn" onclick="sortVideos('views')"><i class="fas fa-eye"></i> Most Viewed</button>
+            <button class="sort-btn" onclick="sortVideos('title-asc')"><i class="fas fa-sort-alpha-down"></i> A-Z</button>
+            <button class="sort-btn" onclick="sortVideos('title-desc')"><i class="fas fa-sort-alpha-up"></i> Z-A</button>
+        </div>
+    </div>
+
+    <div id="videoContainer">
+        {% for video_id in video_ids %}
+        <div class="video-card" data-video-id="{{video_id}}">
+            <div class="video-player" id="player-{{video_id}}"></div>
+            <div class="video-info">
+                <div class="video-title" id="title-{{video_id}}">Loading title...</div>
+                <div class="video-stats" id="stats-{{video_id}}">
+                    <span><i class="fas fa-calendar"></i> <span id="date-{{video_id}}">--</span></span>
+                    <span style="margin-left: 10px;"><i class="fas fa-eye"></i> <span id="views-{{video_id}}">--</span></span>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        // Store video data
+        let videoData = {};
+        
+        // Fetch video metadata when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            const videoCards = document.querySelectorAll('.video-card');
+            
+            videoCards.forEach(card => {
+                const videoId = card.getAttribute('data-video-id');
+                fetchVideoData(videoId);
+            });
+        });
+
+        // Fetch video details from YouTube API
+        async function fetchVideoData(videoId) {
+            try {
+                const response = await fetch(`/video-details?id=${videoId}`);
+                const data = await response.json();
+                
+                if (data.items && data.items.length > 0) {
+                    const video = data.items[0];
+                    videoData[videoId] = {
+                        title: video.snippet.title,
+                        publishedAt: new Date(video.snippet.publishedAt),
+                        views: parseInt(video.statistics.viewCount),
+                        duration: video.contentDetails.duration
+                    };
+                    
+                    // Update the DOM
+                    document.getElementById(`title-${videoId}`).textContent = video.snippet.title;
+                    document.getElementById(`date-${videoId}`).textContent = formatDate(video.snippet.publishedAt);
+                    document.getElementById(`views-${videoId}`).textContent = formatViews(video.statistics.viewCount);
+                    
+                    // Store data on card element
+                    const card = document.querySelector(`[data-video-id="${videoId}"]`);
+                    card.setAttribute('data-title', video.snippet.title.toLowerCase());
+                    card.setAttribute('data-date', video.snippet.publishedAt);
+                    card.setAttribute('data-views', video.statistics.viewCount);
+                }
+            } catch (error) {
+                console.error(`Error fetching data for video ${videoId}:`, error);
+            }
+        }
+        // Video player controller
+const videoController = {
+    currentPlayer: null,
+    players: {},
+    
+    initPlayer: function(videoId) {
+        // Only initialize if not already created
+        if (!this.players[videoId]) {
+            const playerDiv = document.getElementById(`player-${videoId}`);
+            
+            // Create iframe with YouTube API
+            this.players[videoId] = new YT.Player(`player-${videoId}`, {
+                height: '200',
+                width: '100%',
+                videoId: videoId,
+                playerVars: {
+                    'autoplay': 0,
+                    'controls': 1,
+                    'rel': 0,
+                    'modestbranding': 1
+                },
+                events: {
+                    'onReady': (event) => this.onPlayerReady(event, videoId),
+                    'onStateChange': (event) => this.onPlayerStateChange(event, videoId)
+                }
+            });
+        }
+    },
+    
+    onPlayerReady: function(event, videoId) {
+        // Player is ready, can add event listeners if needed
+    },
+    
+    onPlayerStateChange: function(event, videoId) {
+        // When a video starts playing
+        if (event.data === YT.PlayerState.PLAYING) {
+            // Pause any other playing video
+            if (this.currentPlayer && this.currentPlayer !== videoId) {
+                this.players[this.currentPlayer].pauseVideo();
+            }
+            this.currentPlayer = videoId;
+        }
+        
+        // When a video ends
+        if (event.data === YT.PlayerState.ENDED) {
+            this.currentPlayer = null;
+        }
+    },
+    
+    playVideo: function(videoId) {
+        // Initialize if not already done
+        if (!this.players[videoId]) {
+            this.initPlayer(videoId);
+        }
+        
+        // Play the requested video
+        this.players[videoId].playVideo();
+    }
+};
+
+// Load YouTube API
+function loadYouTubeAPI() {
+    const tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    const firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+}
+
+// Global YouTube API callback
+function onYouTubeIframeAPIReady() {
+    // Initialize all players
+    document.querySelectorAll('.video-card').forEach(card => {
+        const videoId = card.getAttribute('data-video-id');
+        videoController.initPlayer(videoId);
+    });
+}
+
+// Update your DOMContentLoaded event
+document.addEventListener('DOMContentLoaded', () => {
+    // Load YouTube API first
+    loadYouTubeAPI();
+    
+    // Then fetch video data
+    const videoCards = document.querySelectorAll('.video-card');
+    videoCards.forEach(card => {
+        const videoId = card.getAttribute('data-video-id');
+        fetchVideoData(videoId);
+        
+        // Add click handler to play video when clicked
+        card.addEventListener('click', (e) => {
+            // Don't trigger if clicking on child elements (like the title)
+            if (e.target.closest('.video-info')) return;
+            
+            videoController.playVideo(videoId);
+        });
+    });
+});
+
+        // Format date as "MMM DD, YYYY"
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: 'short', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString(undefined, options);
+        }
+
+        // Format view count (e.g., 1.2M)
+        function formatViews(viewCount) {
+            const count = parseInt(viewCount);
+            if (count >= 1000000) {
+                return (count / 1000000).toFixed(1) + 'M';
+            }
+            if (count >= 1000) {
+                return (count / 1000).toFixed(1) + 'K';
+            }
+            return count.toString();
+        }
+
+        // Filter videos based on search input
+        function filterVideos() {
+            const searchTerm = document.getElementById('videoSearch').value.toLowerCase();
+            const cards = document.querySelectorAll('.video-card');
+            
+            cards.forEach(card => {
+                const title = card.getAttribute('data-title') || '';
+                const videoId = card.getAttribute('data-video-id');
+                const displayTitle = document.getElementById(`title-${videoId}`).textContent.toLowerCase();
+                
+                if (title.includes(searchTerm) || displayTitle.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Sort videos based on criteria
+        function sortVideos(criteria) {
+            const container = document.getElementById('videoContainer');
+            const cards = Array.from(document.querySelectorAll('.video-card[style*="display: block"], .video-card:not([style])'));
+            
+            cards.sort((a, b) => {
+                const aId = a.getAttribute('data-video-id');
+                const bId = b.getAttribute('data-video-id');
+                
+                switch(criteria) {
+                    case 'date':
+                        return new Date(b.getAttribute('data-date')) - new Date(a.getAttribute('data-date'));
+                    case 'views':
+                        return parseInt(b.getAttribute('data-views')) - parseInt(a.getAttribute('data-views'));
+                    case 'title-asc':
+                        return (a.getAttribute('data-title') || '').localeCompare(b.getAttribute('data-title') || '');
+                    case 'title-desc':
+                        return (b.getAttribute('data-title') || '').localeCompare(a.getAttribute('data-title') || '');
+                    default:
+                        return 0;
+                }
+            });
+            
+            // Re-append sorted cards
+            cards.forEach(card => container.appendChild(card));
+        }
+        // Sub-option selection
+        function selectOption(subOption) {
+    const form = document.getElementById('subOptionForm');
+    document.getElementById('subOptionInput').value = subOption;
+    form.submit();
+}
+    </script>
+</body>
+</html>
