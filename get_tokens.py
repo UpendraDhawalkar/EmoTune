@@ -2,8 +2,8 @@ import requests
 import base64
 
 # Spotify API credentials
-CLIENT_ID = "2244f873a49a4864a27b030620f5a4cb"  # Replace with your Spotify Client ID
-CLIENT_SECRET = "08697b6a6e6f444f86f19eebae1cba17"  # Replace with your Spotify Client Secret
+CLIENT_ID = ""  # Replace with your Spotify Client ID
+CLIENT_SECRET = ""  # Replace with your Spotify Client Secret
 REDIRECT_URI = "http://localhost:8888/callback"  # Must match the redirect URI in your Spotify app
 AUTHORIZATION_CODE = "AQBRsCI8Gu0jISBBIUdRsTOwj96aJkm7C0KQy8wk7NAnFq3O0jnJGie5w-6Gfbwm1W7UxRyq6TlRhPSzuWe_Cker2Kj_P2wzd441FMsm8YjXZ_eu42Yvha81mqrTmj3hHTTt176mrsE_3kn1HqDQb2ZGq0rz3zThBNQMbOkl_fHRdPaBwPirom2Xe-gCS-nLVtnCJmP5DxaeodTvY71F8VGVqnT77A"  # Replace with the code you got from the callback
 
