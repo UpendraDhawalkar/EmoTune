@@ -1,0 +1,1202 @@
+<!-- main.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EmoTune</title>
+    <link rel="shortcut icon" type="image/png" href="../static/fev1M1.png">
+    <link rel="stylesheet" href="../static/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&family=Signika:wght@300&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&family=Courgette&display=swap"
+        rel="stylesheet">
+    <style>
+        /* Login Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 30px;
+            border-radius: 10px;
+            width: 350px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .close-btn {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close-btn:hover {
+            color: #333;
+        }
+
+        /* Google Login Button */
+        .google-login-btn {
+            background-color: #4285F4;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            margin: 20px auto;
+            font-family: 'Baloo Bhaijaan 2', cursive;
+        }
+
+        .google-icon {
+            background: white;
+            padding: 2px;
+            border-radius: 2px;
+            margin-right: 10px;
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Navbar Login Button */
+        .nav-login {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+        }
+
+        .login-btn {
+            background-color: #4285F4;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            font-family: 'Baloo Bhaijaan 2', cursive;
+        }
+
+        .welcome-message {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            font-family: 'Courgette', cursive;
+            color: #4285F4;
+        }
+
+        .user-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .user-name {
+            cursor: pointer;
+            margin-left: 751px;
+            padding: 8px 16px;
+            font-family: 'Courgette', cursive;
+            color: #4285F4;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+            z-index: 1001;
+            border-radius: 4px;
+            margin-top: 5px;
+        }
+
+        .dropdown-content a {
+            color: #333;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            font-family: 'Courgette', cursive;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+        }
+
+        .profile-pic {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        /* Mood Mix Slider Styles */
+    .mood-mix-section {
+        padding: 2rem 1rem;
+        background-color: #3d3d3d;
+        margin-top: 2rem;
+        border-radius: 15px;
+        max-width: 1200px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    .tracks-slider-container {
+        position: relative;
+        margin: 0 auto;
+        max-width: 100%;
+        overflow: hidden;
+    }
+    
+    .tracks-slider {
+        display: flex;
+        gap: 1rem;
+        padding: 1rem;
+        transition: transform 0.5s ease;
+        will-change: transform;
+    }
+    
+    .track-card {
+        flex: 0 0 calc(33.333% - 1rem); /* Show 3 cards at a time */
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        transition: transform 0.3s;
+    }
+    
+    .track-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .slider-nav {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(0,0,0,0.5);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+        cursor: pointer;
+        z-index: 10;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+    
+    .tracks-slider-container:hover .slider-nav {
+        opacity: 1;
+    }
+    
+    .slider-nav.prev {
+        left: 10px;
+    }
+    
+    .slider-nav.next {
+        right: 10px;
+    }
+    
+    @media (max-width: 768px) {
+        .track-card {
+            flex: 0 0 calc(50% - 1rem); /* Show 2 cards on mobile */
+        }
+    }
+     /* Video Mix Slider Styles */
+     .video-mix-section {
+        padding: 2rem 1rem;
+        background-color: #3d3d3d;
+        margin-top: 2rem;
+        border-radius: 15px;
+        max-width: 1200px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    .videos-slider-container {
+        position: relative;
+        margin: 0 auto;
+        max-width: 100%;
+    }
+    
+    .videos-slider {
+        display: flex;
+        overflow-x: auto;
+        gap: 1rem;
+        padding: 1rem;
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        margin: 0 40px;
+    }
+    
+    .videos-slider::-webkit-scrollbar {
+        display: none;
+    }
+    
+    .video-card {
+        flex: 0 0 300px;
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        transition: transform 0.3s;
+    }
+    
+    .video-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .video-thumbnail {
+        position: relative;
+        width: 100%;
+        height: 180px;
+        overflow: hidden;
+    }
+    
+    .video-thumbnail img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .video-play-btn {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(0,0,0,0.6);
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 20px;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    
+    .video-play-btn:hover {
+        background: rgba(0,0,0,0.8);
+        transform: translate(-50%, -50%) scale(1.1);
+    }
+    
+    .video-info {
+        padding: 1rem;
+    }
+    
+    .video-info h3 {
+        margin: 0.5rem 0;
+        font-size: 1rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    .video-info p {
+        margin: 0;
+        color: #666;
+        font-size: 0.9rem;
+    }
+    
+    @media (max-width: 768px) {
+        .video-card {
+            flex: 0 0 250px;
+        }
+    }
+    .video-player-container {
+    width: 100%;
+    height: 100%;
+    display: none;
+    position: relative;
+}
+
+.video-player-container iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+.video-close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+}
+.spotify-player-container {
+    position: relative;
+    z-index: 1;
+}
+
+.video-player-container {
+    z-index: 2;
+}
+
+.video-close-btn {
+    z-index: 3;
+}
+.slider-dots {
+    text-align: center;
+    padding: 10px 0;
+}
+
+.slider-dots .dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    margin: 0 5px;
+    background-color: #bbb;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.slider-dots .dot.active {
+    background-color: #4285F4;
+}
+/* Tablets & below */
+@media (max-width: 992px) {
+
+    /* Modal responsiveness */
+    .modal-content {
+        width: 80%;
+        margin: 25% auto;
+        padding: 20px;
+    }
+
+    /* Navbar welcome/login/user dropdown */
+    .user-name {
+        margin-left: 0;   /* remove fixed margin */
+        padding: 8px 12px;
+        font-size: 14px;
+    }
+
+    .welcome-message {
+        position: relative;
+        top: auto;
+        right: auto;
+        display: block;
+        text-align: center;
+        margin-top: 10px;
+    }
+
+    /* Track cards - 2 per row */
+    .track-card {
+        flex: 0 0 calc(50% - 1rem);
+    }
+}
+
+/* Mobile screens */
+@media (max-width: 600px) {
+
+    /* Modal further adjust */
+    .modal-content {
+        width: 90%;
+        margin: 30% auto;
+        padding: 15px;
+    }
+
+    /* Navbar login button */
+    .login-btn {
+        padding: 6px 12px;
+        font-size: 13px;
+    }
+
+    /* User dropdown */
+    .user-name {
+        font-size: 13px;
+        gap: 5px;
+    }
+
+    /* Track cards - full width on small screens */
+    .track-card {
+        flex: 0 0 100%;
+    }
+
+    /* Video cards smaller */
+    .video-card {
+        flex: 0 0 200px;
+    }
+
+    /* Video thumbnail height reduce */
+    .video-thumbnail {
+        height: 150px;
+    }
+
+    .video-info h3 {
+        font-size: 0.9rem;
+    }
+    .video-info p {
+        font-size: 0.8rem;
+    }
+
+    /* Dots closer spacing */
+    .slider-dots .dot {
+        width: 8px;
+        height: 8px;
+        margin: 0 3px;
+    }
+}
+    </style>
+</head>
+
+<body>
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>Login Required</h2>
+            <p>Please login to access the emotion detection system</p>
+            <a href="/login" class="google-login-btn">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google logo"
+                    class="google-icon">
+                Sign in with Google
+            </a>
+        </div>
+    </div>
+
+    <nav id="navbar">
+        <div id="logo">
+            <img src="../static/logo2.png" alt="myOnlinemeal.com">
+        </div>
+    
+        <div class="p">
+            <h1>EmoTune</h1>
+        </div>
+        
+        {% if 'user' not in session %}
+        <div class="nav-login">
+            <button id="navLoginBtn" class="login-btn">Login</button>
+        </div>
+        {% else %}
+        <div class="user-dropdown">
+            <div class="user-name">
+                {% if session.user.picture %}
+                <!-- <img src="{{ session.user.picture }}" class="profile-pic" alt="Profile"> -->
+                {% endif %}
+                {{ session.user.name }} <i class="fas fa-caret-down"></i>
+            </div>
+            <div class="dropdown-content" id="userDropdown">
+                
+                <a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </div>
+        {% endif %}
+    </nav>
+
+
+    <div class="detail">
+        <h1>Enjoy free <span class="spanA">Video</span> & <span class="spanB">Music</span></h1>
+        <p>This platform created to provide you best
+            <br> Video and Music based on your current mood (Emotion).
+        </p>
+        <br>
+        <div class="left">
+            <button class="btn"><a href="#body1">Know More</a></button>
+            <button id="getStartedBtn" class="btn">Get Started</button>
+        </div>
+    </div>
+    <div class="image">
+        <img src="../static/Shape.png" class=shape>
+        <img src="../static/a.png" class=panda>
+    </div>
+    <!-- Add this right after your image section -->
+{% if 'user' in session %}
+<div class="mood-mix-section">
+    <div class="section-header" style="text-align: center;color: white">
+        <h2>Your Personalized Mood Mix</h2><br>
+        
+    </div>
+    
+    <div class="tracks-slider-container">
+        <div class="tracks-slider" id="moodMixSlider">
+            <!-- Tracks will be loaded via JavaScript -->
+        </div>
+        <button class="slider-nav prev" onclick="pauseAutoSlide(); slide(-1)">❮</button>
+        <button class="slider-nav next" onclick="pauseAutoSlide(); slide(1)">❯</button>
+    </div>
+</div>
+{% endif %}
+{% if 'user' in session %}
+<div class="video-mix-section">
+    <div class="section-header" style="text-align: center;color: white">
+        <h2>Recommended Videos for Your Mood</h2><br>
+    </div>
+    
+    <div class="videos-slider-container">
+        <div class="videos-slider" id="videosSlider">
+            <!-- Videos will be loaded via JavaScript -->
+        </div>
+        <button class="slider-nav prev" onclick="slideVideo(-1)">❮</button>
+        <button class="slider-nav next" onclick="slideVideo(1)">❯</button>
+    </div>
+    
+    <div class="slider-dots" id="videosSliderDots"></div>
+</div>
+{% endif %}
+
+<br><br><br><br><br>
+    <div class="middle"><br><br>
+        <h1>Know More About It</h1>
+    </div>
+    <div id="body1">
+        <div class="container">
+            <div class="card">
+                <div class="content">
+                    <h3>Motto</h3>
+                    <p> The main motto behind this project is to reduce stress and save time of the people from their
+                        hectic schedule. This website provide you Video and Music based on your emotion. To read more
+                        about benefit of stress-free life click on read more.
+                    <p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="content">
+                    <h3>Video</h3>
+                    <p>You can watch Short Movie/Video based on your emotion. After clicking on get started,show your
+                        face on webcame to detect your current emotion, after the detection completed select video to
+                        get variety of Video. To read more about benefit of Video click on below button. </p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="content">
+                    <h3>Music</h3>
+                    <p>You can listen music based on your emotion. After clicking on Get Started button show your face
+                        to webcame to detect your emotion, after detection simply click on music to get music. To read
+                        more about benefit of Music click on below button.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-conatiner">
+            <div class="center">
+                <h1>Best things for Entertainment</h1>
+            </div><br>
+            <div class="social-media">
+                <a href="#">
+                    <span1 class="span1"><i class="fab fa-facebook-f"></span></i>
+                </a>
+                <a href="#">
+                    <span1 class="span2"><i class="fab fa-twitter"></span></i>
+                </a>
+                <a href="#">
+                    <span1 class="span3"><i class="fab fa-instagram"></span></i>
+                </a>
+                <a href="#">
+                    <span1 class="span4"><i class="fab fa-youtube"></span></i>
+                </a>
+            </div><br>
+        </div>
+    </footer>
+
+    <script>
+        
+// Global media controller
+const mediaController = {
+    currentVideo: null,
+    
+    playVideo: function(videoId, container, thumbnail, playBtn) {
+        // Pause current video if one is playing
+        if (this.currentVideo && this.currentVideo.container !== container) {
+            this.pauseCurrentVideo();
+        }
+        
+        // Create new iframe
+        container.innerHTML = '';
+        const iframe = document.createElement('iframe');
+        iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&enablejsapi=1`;
+        iframe.setAttribute('allowfullscreen', '');
+        iframe.setAttribute('allow', 'accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture');
+        container.appendChild(iframe);
+        
+        // Show container and hide thumbnail
+        container.style.display = 'block';
+        thumbnail.style.display = 'none';
+        playBtn.style.display = 'none';
+        
+        // Store reference to current video
+        this.currentVideo = {
+            container,
+            thumbnail,
+            playBtn,
+            iframe
+        };
+        
+        // Add close button
+        const closeBtn = document.createElement('div');
+        closeBtn.className = 'video-close-btn';
+        closeBtn.innerHTML = '<i class="fas fa-times"></i>';
+        closeBtn.onclick = (e) => {
+            e.stopPropagation();
+            this.pauseCurrentVideo();
+            container.innerHTML = '';
+            thumbnail.style.display = 'block';
+            playBtn.style.display = 'flex';
+            this.currentVideo = null;
+        };
+        container.appendChild(closeBtn);
+    },
+    
+    pauseCurrentVideo: function() {
+        if (!this.currentVideo) return;
+        
+        // Properly stop the video
+        const iframe = this.currentVideo.iframe;
+        if (iframe) {
+            iframe.src = iframe.src.replace('autoplay=1', 'autoplay=0');
+        }
+        
+        // Hide player and show thumbnail
+        this.currentVideo.container.style.display = 'none';
+        this.currentVideo.thumbnail.style.display = 'block';
+        this.currentVideo.playBtn.style.display = 'flex';
+    }
+};
+        
+        // DOM Ready Handler
+        document.addEventListener('DOMContentLoaded', function () {
+            // Modal elements
+            const modal = document.getElementById("loginModal");
+            const navLoginBtn = document.getElementById("navLoginBtn");
+            const getStartedBtn = document.getElementById("getStartedBtn");
+            const closeBtn = document.querySelector(".close-btn");
+
+            // Modal functions
+            if (navLoginBtn) {
+                navLoginBtn.addEventListener('click', () => {
+                    modal.style.display = "block";
+                });
+            }
+
+            getStartedBtn.addEventListener('click', async () => {
+                try {
+                    const response = await fetch('/check-login');
+                    const data = await response.json();
+                    if (data.loggedIn) {
+                        window.location.href = "/index";
+                    } else {
+                        modal.style.display = "block";
+                    }
+                } catch (error) {
+                    console.error("Error checking login status:", error);
+                    modal.style.display = "block";
+                }
+            });
+
+            closeBtn.onclick = function () {
+                modal.style.display = "none";
+            }
+
+            window.onclick = function (event) {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
+            }
+
+            // Dropdown functionality
+            const dropdownToggle = document.querySelector('.user-name');
+            const dropdownContent = document.getElementById('userDropdown');
+
+            if (dropdownToggle && dropdownContent) {
+                dropdownToggle.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    dropdownContent.style.display =
+                        dropdownContent.style.display === 'block' ? 'none' : 'block';
+                });
+
+                document.addEventListener('click', function () {
+                    dropdownContent.style.display = 'none';
+                });
+
+                dropdownContent.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                });
+            }
+
+            // Login status check
+            setInterval(async () => {
+                if (modal.style.display === "block") {
+                    try {
+                        const response = await fetch('/check-login');
+                        const data = await response.json();
+                        if (data.loggedIn) {
+                            window.location.href = "/index";
+                        }
+                    } catch (error) {
+                        console.error("Error checking login status:", error);
+                    }
+                }
+            }, 2000);
+        });
+
+       // Global variables for slider control
+    let currentSlide = 0;
+    let slideInterval;
+    const slideDuration = 5000; // 5 seconds per slide
+    
+    // Load mood mix when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        if (document.getElementById('moodMixSlider')) {
+            fetchMoodMix();
+        }
+    });
+    
+    // Fetch mood mix from server
+    async function fetchMoodMix() {
+        try {
+            const response = await fetch('/get-mood-mix');
+            const data = await response.json();
+            
+            if (data.tracks && data.tracks.length > 0) {
+                renderTracks(data.tracks);
+                initAutoSlide();
+            }
+        } catch (error) {
+            console.error('Error fetching mood mix:', error);
+        }
+    }
+    
+   
+   // Render tracks in slider
+   function renderTracks(tracks) {
+    const slider = document.getElementById('moodMixSlider');
+    slider.innerHTML = '';
+    
+    tracks.forEach((track, index) => {
+        const trackCard = document.createElement('div');
+        trackCard.className = 'track-card';
+        trackCard.dataset.index = index;
+        
+        const spotifyContainer = document.createElement('div');
+        spotifyContainer.className = 'spotify-container';
+        spotifyContainer.id = `spotify-${track.id}`;
+        
+        const iframe = document.createElement('iframe');
+        iframe.src = `https://open.spotify.com/embed/track/${track.id}`;
+        iframe.width = '100%';
+        iframe.height = '380';
+        iframe.frameBorder = '0';
+        iframe.allow = 'encrypted-media';
+        iframe.loading = 'lazy';
+        iframe.className = 'spotify-iframe';
+        
+        spotifyContainer.appendChild(iframe);
+        trackCard.appendChild(spotifyContainer);
+        
+        trackCard.innerHTML += `
+            <div style="padding: 1rem;">
+                <span class="mood-tag ${track.mood}" style="
+                    display: inline-block;
+                    padding: 0.3rem 0.8rem;
+                    border-radius: 20px;
+                    font-size: 0.8rem;
+                    font-weight: bold;
+                    margin-bottom: 0.5rem;
+                    background: ${getMoodColor(track.mood)};
+                    color: ${getMoodTextColor(track.mood)};
+                    text-transform: capitalize;
+                ">${track.mood}</span>
+                <h3 style="margin: 0.5rem 0; font-size: 1rem;">${track.name}</h3>
+                <p style="margin: 0; color: #666;">${track.artist}</p>
+            </div>
+        `;
+        
+        slider.appendChild(trackCard);
+        
+        // Add click handler for the track card
+        trackCard.addEventListener('click', function(e) {
+            if (e.target.tagName === 'IFRAME') return;
+            
+            mediaController.setCurrent(spotifyContainer, 'music');
+            
+            // Workaround for Spotify autoplay
+            setTimeout(() => {
+                iframe.contentWindow.postMessage({
+                    event: 'command',
+                    func: 'play'
+                }, '*');
+            }, 500);
+        });
+    });
+}
+    
+    // Get mood-specific colors
+    function getMoodColor(mood) {
+        const colors = {
+            'happy': '#FFD700',
+            'sad': '#1E90FF',
+            'neutral': '#808080',
+            'angry': '#FF4500',
+            'surprise': '#9370DB',
+            'fear': '#4B0082'
+        };
+        return colors[mood] || '#333';
+    }
+    
+    function getMoodTextColor(mood) {
+        return mood === 'happy' ? '#000' : '#FFF';
+    }
+    
+    // Initialize auto-sliding
+    function initAutoSlide() {
+        const slider = document.getElementById('moodMixSlider');
+        const trackCards = slider.querySelectorAll('.track-card');
+        const trackCount = trackCards.length / 2; // Original count without duplication
+        
+        slideInterval = setInterval(() => {
+            currentSlide = (currentSlide + 1) % trackCount;
+            updateSliderPosition();
+        }, slideDuration);
+        
+        // Pause on hover
+        slider.addEventListener('mouseenter', pauseAutoSlide);
+        slider.addEventListener('mouseleave', resumeAutoSlide);
+    }
+    
+    // Update slider position
+    function updateSliderPosition() {
+        const slider = document.getElementById('moodMixSlider');
+        const trackWidth = slider.querySelector('.track-card').offsetWidth + 16; // card + gap
+        slider.style.transform = `translateX(-${currentSlide * trackWidth}px)`;
+    }
+    
+    // Manual slide navigation
+    function slide(direction) {
+        const trackCount = document.getElementById('moodMixSlider').querySelectorAll('.track-card').length / 2;
+        currentSlide = (currentSlide + direction + trackCount) % trackCount;
+        updateSliderPosition();
+        pauseAutoSlide();
+        resumeAutoSlide();
+    }
+    
+    // Pause auto-slide
+    function pauseAutoSlide() {
+        clearInterval(slideInterval);
+    }
+    
+    // Resume auto-slide
+    function resumeAutoSlide() {
+        clearInterval(slideInterval); // Clear existing interval
+        slideInterval = setInterval(() => {
+            currentSlide = (currentSlide + 1) % (document.getElementById('moodMixSlider').querySelectorAll('.track-card').length / 2);
+            updateSliderPosition();
+        }, slideDuration);
+    }
+    
+     // Video slider variables
+     let videoSlideInterval;
+    let currentVideoPage = 0;
+    
+    // Load videos when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        if (document.getElementById('videosSlider')) {
+            fetchRecommendedVideos();
+        }
+    });
+    
+    // Fetch recommended videos from server
+    async function fetchRecommendedVideos() {
+        try {
+            const response = await fetch('/get-recommended-videos');
+            const data = await response.json();
+            
+            if (data.videos && data.videos.length > 0) {
+                renderVideos(data.videos);
+                initVideoSlider();
+                startVideoAutoSlide();
+            }
+        } catch (error) {
+            console.error('Error fetching recommended videos:', error);
+        }
+    }
+    
+    // Render videos in slider - UPDATED VERSION
+   // In your renderVideos function, update the video card HTML to include the mood tag with styling:
+function renderVideos(videos) {
+    const slider = document.getElementById('videosSlider');
+    slider.innerHTML = '';
+    
+    videos.forEach(video => {
+        const videoCard = document.createElement('div');
+        videoCard.className = 'video-card';
+        videoCard.innerHTML = `
+            <div class="video-thumbnail">
+                <div class="video-player-container" id="player-${video.id}"></div>
+                <img src="${video.thumbnail}" alt="${video.title}" class="thumbnail-image">
+                <div class="video-play-btn">
+                    <i class="fas fa-play"></i>
+                </div>
+            </div>
+            <div class="video-info">
+                <span class="mood-tag" style="
+                    display: inline-block;
+                    padding: 0.3rem 0.8rem;
+                    border-radius: 20px;
+                    font-size: 0.8rem;
+                    font-weight: bold;
+                    margin-bottom: 0.5rem;
+                    background: ${getMoodColor(video.mood)};
+                    color: ${getMoodTextColor(video.mood)};
+                    text-transform: capitalize;
+                ">${video.mood}</span>
+                <h3>${video.title}</h3>
+                <p>${video.duration} • ${video.views} views</p>
+            </div>
+        `;
+        slider.appendChild(videoCard);
+        
+        const container = videoCard.querySelector(`#player-${video.id}`);
+        const thumbnail = videoCard.querySelector('.thumbnail-image');
+        const playBtn = videoCard.querySelector('.video-play-btn');
+        
+        thumbnail.addEventListener('click', () => mediaController.playVideo(video.id, container, thumbnail, playBtn));
+        playBtn.addEventListener('click', () => mediaController.playVideo(video.id, container, thumbnail, playBtn));
+    });
+}
+    
+function showVideoPlayer(videoId, container, thumbnail, playBtn) {
+    // Pause any currently playing media
+    mediaController.pauseCurrent();
+    
+    // Hide thumbnail and play button
+    thumbnail.style.display = 'none';
+    playBtn.style.display = 'none';
+    
+    // Create new iframe (don't reuse existing one to avoid issues)
+    container.innerHTML = ''; // Clear any existing iframe
+    const iframe = document.createElement('iframe');
+    iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&enablejsapi=1`;
+    iframe.setAttribute('allowfullscreen', '');
+    iframe.setAttribute('allow', 'accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture');
+    container.appendChild(iframe);
+    
+    // Show the container
+    container.style.display = 'block';
+    
+    // Register this player as current
+    mediaController.setCurrent(container, 'video');
+    
+    // Add close button
+    const closeBtn = document.createElement('div');
+    closeBtn.className = 'video-close-btn';
+    closeBtn.innerHTML = '<i class="fas fa-times"></i>';
+    closeBtn.onclick = (e) => {
+        e.stopPropagation();
+        mediaController.pauseCurrent();
+        container.innerHTML = '';
+        thumbnail.style.display = 'block';
+        playBtn.style.display = 'flex';
+    };
+    container.appendChild(closeBtn);
+}
+    // Initialize video slider controls
+    function initVideoSlider() {
+        const slider = document.getElementById('videosSlider');
+        const dotsContainer = document.getElementById('videosSliderDots');
+        
+        // Create dots based on number of videos
+        dotsContainer.innerHTML = '';
+        const videoCount = slider.children.length;
+        const visibleCount = Math.floor(slider.offsetWidth / 316); // 300px card + 16px gap
+        
+        for (let i = 0; i < Math.ceil(videoCount / visibleCount); i++) {
+            const dot = document.createElement('span');
+            dot.className = 'dot' + (i === 0 ? ' active' : '');
+            dot.onclick = () => {
+                currentVideoPage = i;
+                slider.scrollTo({
+                    left: i * slider.offsetWidth,
+                    behavior: 'smooth'
+                });
+                resetVideoAutoSlide();
+            };
+            dotsContainer.appendChild(dot);
+        }
+        
+        // Update dots on scroll
+        slider.addEventListener('scroll', () => {
+            const scrollPos = slider.scrollLeft;
+            const activeDot = Math.round(scrollPos / slider.offsetWidth);
+            
+            document.querySelectorAll('#videosSliderDots .dot').forEach((dot, index) => {
+                dot.classList.toggle('active', index === activeDot);
+            });
+        });
+    }
+    
+    // Manual video slider navigation
+    function slideVideo(direction) {
+        const slider = document.getElementById('videosSlider');
+        const dots = document.querySelectorAll('#videosSliderDots .dot');
+        
+        currentVideoPage = (currentVideoPage + direction + dots.length) % dots.length;
+        
+        slider.scrollTo({
+            left: currentVideoPage * slider.offsetWidth,
+            behavior: 'smooth'
+        });
+        
+        resetVideoAutoSlide();
+    }
+    
+    // Start auto-sliding for videos
+    function startVideoAutoSlide() {
+        videoSlideInterval = setInterval(() => {
+            const slider = document.getElementById('videosSlider');
+            const dots = document.querySelectorAll('#videosSliderDots .dot');
+            
+            currentVideoPage = (currentVideoPage + 1) % dots.length;
+            
+            slider.scrollTo({
+                left: currentVideoPage * slider.offsetWidth,
+                behavior: 'smooth'
+            });
+        }, 15000); // Change slide every 5 seconds
+    }
+    
+    // Reset auto-slide timer
+    function resetVideoAutoSlide() {
+        clearInterval(videoSlideInterval);
+        startVideoAutoSlide();
+    }
+    
+   
+    function initVideoPlayer(videoId, thumbnailUrl) {
+    const container = document.getElementById(`player-${videoId}`);
+    const thumbnail = container.previousElementSibling;
+    const playBtn = thumbnail.nextElementSibling;
+    
+    // Hide thumbnail and play button, show player
+    thumbnail.style.display = 'none';
+    playBtn.style.display = 'none';
+    container.style.display = 'block';
+    
+    // Create YouTube iframe player if it doesn't exist
+    if (!container.querySelector('iframe')) {
+        const iframe = document.createElement('iframe');
+        iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&enablejsapi=1`;
+        iframe.setAttribute('allowfullscreen', '');
+        iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
+        container.appendChild(iframe);
+    }
+    
+    // Add close button if it doesn't exist
+    if (!container.querySelector('.video-close-btn')) {
+        const closeBtn = document.createElement('div');
+        closeBtn.className = 'video-close-btn';
+        closeBtn.innerHTML = '<i class="fas fa-times"></i>';
+        closeBtn.onclick = (e) => {
+            e.stopPropagation();
+            const iframe = container.querySelector('iframe');
+            if (iframe) {
+                // Stop the video
+                iframe.src = '';
+                container.removeChild(iframe);
+            }
+            container.style.display = 'none';
+            thumbnail.style.display = 'block';
+            playBtn.style.display = 'flex';
+        };
+        container.appendChild(closeBtn);
+    }
+}
+function initVideoSlider() {
+    const slider = document.getElementById('videosSlider');
+    const dotsContainer = document.getElementById('videosSliderDots');
+    dotsContainer.innerHTML = '';
+    
+    const videoCount = slider.children.length;
+    const visibleCount = Math.min(3, Math.floor(slider.offsetWidth / 316));
+    
+    for (let i = 0; i < Math.ceil(videoCount / visibleCount); i++) {
+        const dot = document.createElement('span');
+        dot.className = 'dot' + (i === 0 ? ' active' : '');
+        dot.onclick = () => {
+            currentVideoPage = i;
+            slider.scrollTo({
+                left: i * slider.offsetWidth,
+                behavior: 'smooth'
+            });
+            resetVideoAutoSlide();
+        };
+        dotsContainer.appendChild(dot);
+    }
+    
+    slider.addEventListener('scroll', () => {
+        const scrollPos = slider.scrollLeft;
+        const activeDot = Math.round(scrollPos / slider.offsetWidth);
+        
+        document.querySelectorAll('#videosSliderDots .dot').forEach((dot, index) => {
+            dot.classList.toggle('active', index === activeDot);
+        });
+    });
+}
+
+function slideVideo(direction) {
+    const slider = document.getElementById('videosSlider');
+    const dots = document.querySelectorAll('#videosSliderDots .dot');
+    
+    currentVideoPage = (currentVideoPage + direction + dots.length) % dots.length;
+    
+    slider.scrollTo({
+        left: currentVideoPage * slider.offsetWidth,
+        behavior: 'smooth'
+    });
+    
+    resetVideoAutoSlide();
+}
+
+function startVideoAutoSlide() {
+    videoSlideInterval = setInterval(() => {
+        const slider = document.getElementById('videosSlider');
+        const dots = document.querySelectorAll('#videosSliderDots .dot');
+        
+        currentVideoPage = (currentVideoPage + 1) % dots.length;
+        
+        slider.scrollTo({
+            left: currentVideoPage * slider.offsetWidth,
+            behavior: 'smooth'
+        });
+    }, 10000);
+}
+
+function resetVideoAutoSlide() {
+    clearInterval(videoSlideInterval);
+    startVideoAutoSlide();
+}
+    </script>
+</body>
+
+</html>

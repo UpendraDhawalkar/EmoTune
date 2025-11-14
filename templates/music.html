@@ -1,0 +1,225 @@
+<!-- music.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TOP {{input}} Songs</title>
+    <link rel="shortcut icon" type="image/png" href="../static/fev1M1.png">
+    <link rel="stylesheet" href="../static/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .controls-container {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem;
+            background: #f5f5f5;
+            margin: 1rem;
+            border-radius: 10px;
+        }
+        .search-box {
+            position: relative;
+            width: 300px;
+        }
+        #searchInput {
+            padding: 10px 15px;
+            width: 100%;
+            border-radius: 20px;
+            border: 1px solid #ddd;
+        }
+        .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #777;
+        }
+        .sort-options {
+            display: flex;
+            gap: 10px;
+        }
+        .sort-btn {
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: none;
+            background: #1DB954;
+            color: white;
+            cursor: pointer;
+        }
+        #box_div {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
+            padding: 1rem;
+        }
+        .song-card {
+            transition: transform 0.3s;
+        }
+        .song-card:hover {
+            transform: scale(1.02);
+        }
+        .song-info {
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 0 0 8px 8px;
+        }
+        .sub-options {
+            display: flex;
+            gap: 10px;
+            padding: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .option-btn {
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: 2px solid #1DB954;
+            background: white;
+            color: #1DB954;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .option-btn:hover {
+            background: #1DB954;
+            color: white;
+        }
+        .option-btn.active {
+            background: #1DB954;
+            color: white;
+        }
+    </style>
+</head>
+<body class="index resultpage">
+    <nav>
+        <h1 style='text-align:center'>TOP {{input}} Songs</h1>
+        <button class="btn"><a href="/">Home</a></button>
+        <button class="btn"><a href="/index">Back to detect emotion</a></button>
+    </nav>
+    <form id="subOptionForm" method="post" action="/result">
+        <input type="hidden" name="btnradio" value="music"> <!-- or "video" -->
+        <input type="hidden" name="sub_option" id="subOptionInput" value="">
+        <input type="hidden" name="mood" value="{{ input }}"> <!-- Add this line -->
+    </form>
+
+    <div class="controls-container">
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Search songs..." oninput="filterSongs()">
+            <i class="fas fa-search search-icon" style="margin-top: -14px;"></i>
+        </div>
+        <!-- Sub-options section -->
+        <div class="sub-options">
+            {% if input == 'Happy' %}
+                <button class="option-btn {% if current_sub_option == 'love' %}active{% endif %}" 
+                        onclick="selectOption('love')">Love Songs</button>
+                <button class="option-btn {% if current_sub_option == 'vibes' %}active{% endif %}" 
+                        onclick="selectOption('vibes')">Good Vibes</button>
+            {% endif %}
+            {% if input == 'Sad' %}
+                <button class="option-btn {% if current_sub_option == 'melancholic' %}active{% endif %}" 
+                        onclick="selectOption('melancholic')">Melancholic</button>
+                <button class="option-btn {% if current_sub_option == 'comfort' %}active{% endif %}" 
+                        onclick="selectOption('comfort')">Comfort Songs</button>
+            {% endif %}
+            {% if input == 'Neutral' %}
+                <button class="option-btn {% if current_sub_option == 'focus' %}active{% endif %}" 
+                        onclick="selectOption('focus')">focus Songs</button>
+                <button class="option-btn {% if current_sub_option == 'relax' %}active{% endif %}" 
+                        onclick="selectOption('relax')">Relax song</button>
+            {% endif %}
+            {% if input == 'Angry' %}
+                <button class="option-btn {% if current_sub_option == 'aggressive' %}active{% endif %}" 
+                        onclick="selectOption('aggressive')">Aggressive Song</button>
+                <button class="option-btn {% if current_sub_option == 'venting' %}active{% endif %}" 
+                        onclick="selectOption('venting')">Venting Songs</button>
+            {% endif %}
+            {% if input == 'Surprise' %}
+                <button class="option-btn {% if current_sub_option == 'upbeat' %}active{% endif %}" 
+                        onclick="selectOption('upbeat')">Upbeat Songs</button>
+                <button class="option-btn {% if current_sub_option == 'chill' %}active{% endif %}" 
+                        onclick="selectOption('chill')">Chill song</button>
+            {% endif %}
+            {% if input == 'Fear' %}
+                <button class="option-btn {% if current_sub_option == 'brave' %}active{% endif %}" 
+                        onclick="selectOption('brave')">Brave song</button>
+                <button class="option-btn {% if current_sub_option == 'calm' %}active{% endif %}" 
+                        onclick="selectOption('calm')">Calm Songs</button>
+            {% endif %}
+            
+        </div>
+        <div class="sort-options">
+            <button class="sort-btn" onclick="sortSongs('name-asc')"><i class="fas fa-sort-alpha-down"></i> A-Z</button>
+            <button class="sort-btn" onclick="sortSongs('name-desc')"><i class="fas fa-sort-alpha-up"></i> Z-A</button>
+            <button class="sort-btn" onclick="sortSongs('popularity')"><i class="fas fa-fire"></i> Popular</button>
+        </div>
+    </div>
+    
+
+    <div id="box_div">
+        {% for track in tracks %}
+        <div class="song-card" data-name="{{track.name.lower()}}" data-artist="{{track.artist.lower()}}" 
+             data-popularity="{{track.popularity}}" data-duration="{{track.duration_ms}}">
+            <iframe src="https://open.spotify.com/embed/track/{{track.id}}?utm_source=generator" 
+                    width="100%" 
+                    height="380"
+                    frameBorder="0" 
+                    allowfullscreen=""
+                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture">
+            </iframe>
+            <div class="song-info">
+                <h3>{{track.name}}</h3>
+                <p>{{track.artist}}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        // Search function
+        function filterSongs() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const cards = document.querySelectorAll('.song-card');
+            
+            cards.forEach(card => {
+                const name = card.getAttribute('data-name');
+                const artist = card.getAttribute('data-artist');
+                if (name.includes(searchTerm) || artist.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+        
+        // Sort function
+        function sortSongs(mode) {
+            const container = document.getElementById('box_div');
+            const cards = Array.from(document.querySelectorAll('.song-card[style*="display: block"], .song-card:not([style])'));
+            
+            cards.sort((a, b) => {
+                switch(mode) {
+                    case 'name-asc':
+                        return a.getAttribute('data-name').localeCompare(b.getAttribute('data-name'));
+                    case 'name-desc':
+                        return b.getAttribute('data-name').localeCompare(a.getAttribute('data-name'));
+                    case 'popularity':
+                        return b.getAttribute('data-popularity') - a.getAttribute('data-popularity');
+                    default:
+                        return 0;
+                }
+            });
+            
+            // Re-append sorted cards
+            cards.forEach(card => container.appendChild(card));
+        }
+
+        // Sub-option selection
+        // Sub-option selection
+        function selectOption(subOption) {
+    const form = document.getElementById('subOptionForm');
+    document.getElementById('subOptionInput').value = subOption;
+    form.submit();
+}
+    </script>
+</body>
+</html>
