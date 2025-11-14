@@ -16,7 +16,7 @@ from refresh import Refresh
 
 # Initialize Flask app
 app = Flask(__name__)
-app.secret_key = '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'  # Change this to a secure random key
+app.secret_key = ''  # Change this to a secure random key
 
 # Configuration
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'  # Remove in production
